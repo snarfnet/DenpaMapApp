@@ -80,6 +80,14 @@ struct ContentView: View {
 
             Spacer()
 
+            // Legend
+            legendView
+
+            // Typewriter log
+            if viewModel.isScanning {
+                typewriterLog
+            }
+
             // Live stats panel
             if viewModel.isScanning {
                 livePanel
@@ -184,6 +192,49 @@ struct ContentView: View {
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 12)
+    }
+
+    private var legendView: some View {
+        HStack(spacing: 8) {
+            Text("電波品質:")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.white)
+            legendDot(.green, "最高")
+            legendDot(Color(red: 0.4, green: 0.8, blue: 0.2), "良好")
+            legendDot(.yellow, "普通")
+            legendDot(.orange, "弱い")
+            legendDot(.red, "圏外")
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 10).fill(.ultraThinMaterial))
+        .padding(.horizontal, 16)
+    }
+
+    private func legendDot(_ color: Color, _ label: String) -> some View {
+        HStack(spacing: 3) {
+            Circle().fill(color).frame(width: 10, height: 10)
+            Text(label)
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundColor(.white.opacity(0.9))
+        }
+    }
+
+    private var typewriterLog: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            ForEach(Array(viewModel.scanLog.suffix(4).enumerated()), id: \.offset) { idx, line in
+                Text(line)
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundColor(.green.opacity(1.0 - Double(viewModel.scanLog.suffix(4).count - 1 - idx) * 0.2))
+                    .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.black.opacity(0.75)))
+        .padding(.horizontal, 16)
+        .padding(.bottom, 4)
     }
 
     // MARK: - Colors

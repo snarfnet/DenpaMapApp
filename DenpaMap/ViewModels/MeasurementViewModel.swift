@@ -9,6 +9,7 @@ class MeasurementViewModel: ObservableObject {
     @Published var currentSpeed: Double = 0
     @Published var currentNetworkType: String = "---"
     @Published var scanCount: Int = 0
+    @Published var scanLog: [String] = []
 
     let locationManager = LocationManager()
     private let networkMeasurer = NetworkMeasurer()
@@ -26,6 +27,7 @@ class MeasurementViewModel: ObservableObject {
     func startScanning() {
         guard !isScanning else { return }
         isScanning = true
+        scanLog.removeAll()
         locationManager.startUpdating()
 
         scanTask = Task {
@@ -72,6 +74,18 @@ class MeasurementViewModel: ObservableObject {
         currentSpeed = result.speedMbps
         currentNetworkType = networkMeasurer.currentNetworkType
         scanCount += 1
+
+        let ts = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        let q = measurement.quality
+        let label: String = switch q {
+        case .excellent: "EXCELLENT"
+        case .good: "GOOD"
+        case .fair: "FAIR"
+        case .poor: "POOR"
+        case .dead: "DEAD"
+        }
+        let line = "[\(ts)] \(networkMeasurer.currentNetworkType) \(String(format: "%.0fms", result.latencyMs)) \(String(format: "%.1fMbps", result.speedMbps)) [\(label)]"
+        scanLog.append(line)
     }
 
     // MARK: - Stats
