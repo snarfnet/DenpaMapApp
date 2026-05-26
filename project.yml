@@ -63,4 +63,5 @@ targets:
           - SKAdNetworkIdentifier: v72qych5uu.skadnetwork
           - SKAdNetworkIdentifier: 3rd42ekr43.skadnetwork
           - SKAdNetworkIdentifier: 3qcr597p9d.skadnetwork
+        CFBundleIconName: AppIcon
         ITSAppUsesNonExemptEncryption: false
